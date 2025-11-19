@@ -1,21 +1,14 @@
-# syntax=docker/dockerfile:1
-FROM golang:1.21-alpine AS base
-WORKDIR /src
-COPY go.mod go.sum .
-RUN go mod download
-COPY . .
+FROM node:18
 
-FROM base AS build-client
-RUN go build -o /bin/client ./cmd/client
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
 
-FROM base AS build-server
-RUN go build -o /bin/server ./cmd/server
+COPY package*.json /usr/src/app
 
-FROM scratch AS client
-COPY --from=build-client /bin/client /bin/
-ENTRYPOINT [ "/bin/client" ]
-CMD [ "-baseURL", "http://go-example-server" ]
+RUN npm install
 
-FROM scratch AS server
-COPY --from=build-server /bin/server /bin/
-ENTRYPOINT [ "/bin/server" ]
+COPY . /usr/src/app
+
+EXPOSE 5000
+
+CMD [ "npm","start" ]
