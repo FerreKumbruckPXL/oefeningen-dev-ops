@@ -14,6 +14,12 @@ jobs:
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract metadata
+        uses: docker/metadata-action@v5
+        with:
+            images: ${{vars.DOCKERHUB_USERNAME}}/calculator-app
+      
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -25,6 +31,6 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: user/app:latest
+          tags: ${{vars.DOCKERHUB_USERNAME}}/calculator-app:latest
       
     
